@@ -9,20 +9,20 @@
 ### Team Name: [Name]
 
 ### Team Members
-- Member 1: [Name] - [College]
-- Member 2: [Name] - [College]
+- Member 1: Anusree Aravind - GEC Palakkad 
+- Member 2: Nanadana D - GEC Palakkadf
 
 ### Hosted Project Link
 [mention your project hosted link here]
 
 ### Project Description
-[2-3 lines about what your project does]
+A game to invoke awareness about traffic rules in children. 
 
 ### The Problem statement
-[What problem are you solving?]
+A generation unaware or neglecting traffic rules
 
 ### The Solution
-[How are you solving it?]
+through a game based approach these rules get into the minds of the kids so they follow it throughout their life.
 
 ---
 
@@ -31,10 +31,10 @@
 ### Technologies/Components Used
 
 **For Software:**
-- Languages used: [e.g., JavaScript, Python, Java]
+- Languages used: HTML , CSS, JavaScript
 - Frameworks used: [e.g., React, Django, Spring Boot]
 - Libraries used: [e.g., axios, pandas, JUnit]
-- Tools used: [e.g., VS Code, Git, Docker]
+- Tools used: Vs Code
 
 **For Hardware:**
 - Main components: [List main components]
@@ -46,9 +46,9 @@
 ## Features
 
 List the key features of your project:
-- Feature 1: [Description]
-- Feature 2: [Description]
-- Feature 3: [Description]
+- Feature 1: study of traffic rules
+- Feature 2: interactive quiz session
+- Feature 3: A real time application of traffic rules
 - Feature 4: [Description]
 
 ---
@@ -85,9 +85,14 @@ List the key features of your project:
 
 ![Screenshot1](Add screenshot 1 here with proper name)
 *Add caption explaining what this shows*
+<img width="1920" height="1020" alt="image" src="https://github.com/user-attachments/assets/1c2c7690-6337-422e-a095-b3c2b1005b89" />
+after 3 mistakes , a question is asked 
 
 ![Screenshot2](Add screenshot 2 here with proper name)
 *Add caption explaining what this shows*
+<img width="1920" height="1020" alt="image" src="https://github.com/user-attachments/assets/7507a2b1-0d6d-48f3-9d00-787ac6f4b1f8" />
+the gaming interface
+
 
 ![Screenshot3](Add screenshot 3 here with proper name)
 *Add caption explaining what this shows*
@@ -98,12 +103,19 @@ List the key features of your project:
 
 ![Architecture Diagram](docs/architecture.png)
 *Explain your system architecture - components, data flow, tech stack interaction*
+<img width="1633" height="3124" alt="mermaid-diagram-2026-02-28-094938" src="https://github.com/user-attachments/assets/fb8c8973-c676-476a-a1c5-df232aee04f1" />
+workflow diagram
 
 **Application Workflow:**
 
 ![Workflow](docs/workflow.png)
 *Add caption explaining your workflow*
+1. It's a car racing game..
+2. But even in this busy road and schedule user must follow traffic rules like signal.. Speed limit.. Pedestrian cross and many more
 
+3. If they rightly follow.. +10 else -10 .. 3 mistakes game end
+4. The winner of the race is decided based on the total pts
+5. once when the user commits 3 mistakes then we will ask a road safety based question and if they answer it righly the  they can continue
 ---
 
 ### For Hardware:
@@ -418,4 +430,5 @@ This project is licensed under the [LICENSE_NAME] License - see the [LICENSE](LI
 ---
 
 Made with ❤️ at TinkerHub
+
 
