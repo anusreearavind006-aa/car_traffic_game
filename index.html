@@ -2,171 +2,173 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Intersection Master</title>
+    <title>Driving School: Last Chance</title>
     <style>
-        body { margin: 0; display: flex; flex-direction: column; align-items: center; background: #222; font-family: sans-serif; color: white; overflow: hidden; }
-        canvas { background: #444; border: 4px solid #111; margin-top: 20px; box-shadow: 0 0 20px black; }
-        .stats { display: flex; gap: 50px; font-size: 24px; margin-top: 15px; font-weight: bold; }
-        #msg { position: absolute; top: 50%; background: rgba(0,0,0,0.9); padding: 30px; text-align: center; border: 3px solid #ff4757; display: none; border-radius: 15px; }
-        button { padding: 10px 20px; cursor: pointer; background: #2ed573; color: white; border: none; font-size: 18px; border-radius: 5px; margin-top: 10px; }
-        .instruction { color: #aaa; margin-top: 10px; }
+        body { margin: 0; display: flex; flex-direction: column; align-items: center; background: #1a1a1a; font-family: sans-serif; color: white; overflow: hidden; }
+        canvas { background: #333; border: 4px solid #000; margin-top: 10px; box-shadow: 0 0 20px #000; }
+        .stats { display: flex; gap: 40px; font-size: 22px; margin-top: 10px; background: #222; padding: 10px 30px; border-radius: 10px; }
+        #quiz-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #2c3e50; padding: 30px; text-align: center; border: 4px solid #f1c40f; display: none; border-radius: 15px; width: 320px; z-index: 100; }
+        .q-btn { display: block; width: 100%; margin: 10px 0; padding: 10px; cursor: pointer; background: #34495e; color: white; border: 1px solid #7f8c8d; border-radius: 5px; }
+        .q-btn:hover { background: #1abc9c; }
+        #game-over { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(231, 76, 60, 0.9); padding: 40px; text-align: center; display: none; border-radius: 15px; z-index: 101; }
     </style>
 </head>
 <body>
 
     <div class="stats">
-        <div style="color: #2ed573;">Score: <span id="score">0</span></div>
-        <div style="color: #ff4757;">Mistakes: <span id="mistakes">0</span>/3</div>
+        <div style="color: #2ecc71;">Score: <span id="score">0</span></div>
+        <div style="color: #e74c3c;">Mistakes: <span id="mistakes">0</span>/3</div>
     </div>
 
-    <div id="msg">
-        <h1 id="statusText">GAME OVER</h1>
-        <p id="reason"></p>
-        <button onclick="resetGame()">RESTART TEST</button>
+    <div id="quiz-overlay">
+        <h2 style="color: #f1c40f;">CRITICAL MISTAKE!</h2>
+        <p>Answer correctly to stay in the game:</p>
+        <p id="question-text" style="font-weight: bold;"></p>
+        <div id="options-container"></div>
+    </div>
+
+    <div id="game-over">
+        <h1>GAME OVER</h1>
+        <p>You failed the driving test.</p>
+        <button onclick="location.reload()" style="padding:10px 20px; cursor:pointer;">RESTART</button>
     </div>
 
     <canvas id="gameCanvas" width="400" height="600"></canvas>
-    <p class="instruction">Hold <b>DOWN ARROW</b> to stop at Red Lights. Wait for Green!</p>
 
 <script>
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     
-    let score, mistakes, isGameOver, roadSpeed;
-    let crosswalkY, pedX, lightStatus, hasEvaluated, waitTimer;
-    
-    const car = { x: 175, y: 460, w: 50, h: 85 };
+    let score = 0, mistakes = 0, isGameOver = false, inQuiz = false;
+    let roadY = -400, pedX = -30, lightStatus = "RED", lightTimer = 180;
+    let hasEvaluated = false, mode = "PED"; // Modes: PED or SIGNAL
+    const car = { x: 175, y: 480, w: 50, h: 85 };
     const keys = {};
 
-    function init() {
-        score = 0;
-        mistakes = 0;
-        isGameOver = false;
-        roadSpeed = 4;
-        crosswalkY = -400;
-        pedX = -30;
-        lightStatus = "RED"; 
-        waitTimer = 100; // Time user must wait at the light
-        hasEvaluated = false;
-        document.getElementById('msg').style.display = 'none';
-        updateUI();
-    }
+    const questions = [
+        { q: "What color means 'Prepare to Stop'?", a: "Yellow", o: ["Yellow", "Green", "Blue"] },
+        { q: "Pedestrians have the right of way.", a: "True", o: ["True", "False"] },
+        { q: "A 'Stop' sign has how many sides?", a: "8", o: ["6", "8", "4"] }
+    ];
 
     window.addEventListener('keydown', e => keys[e.code] = true);
     window.addEventListener('keyup', e => keys[e.code] = false);
 
-    function updateUI() {
+    function triggerQuiz() {
+        inQuiz = true;
+        const qObj = questions[Math.floor(Math.random() * questions.length)];
+        document.getElementById('quiz-overlay').style.display = 'block';
+        document.getElementById('question-text').innerText = qObj.q;
+        const container = document.getElementById('options-container');
+        container.innerHTML = '';
+
+        qObj.o.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'q-btn';
+            btn.innerText = opt;
+            btn.onclick = () => {
+                if (opt === qObj.a) {
+                    mistakes = 2; // Reduce mistakes to give a second chance
+                    inQuiz = false;
+                    document.getElementById('quiz-overlay').style.display = 'none';
+                } else {
+                    endGame();
+                }
+            };
+            container.appendChild(btn);
+        });
+    }
+
+    function endGame() {
+        isGameOver = true;
+        document.getElementById('quiz-overlay').style.display = 'none';
+        document.getElementById('game-over').style.display = 'block';
+    }
+
+    function update() {
+        if (isGameOver || inQuiz) return;
+
+        let speed = keys['ArrowDown'] ? 0 : 4;
+        if (keys['ArrowLeft'] && car.x > 55) car.x -= 5;
+        if (keys['ArrowRight'] && car.x < 295) car.x += 5;
+
+        roadY += speed;
+
+        // Mode Logic
+        if (mode === "SIGNAL") {
+            if (roadY > -100 && lightStatus === "RED") {
+                lightTimer--;
+                if (lightTimer <= 0) lightStatus = "GREEN";
+            }
+            if (lightStatus === "GREEN") pedX += 4;
+        } else {
+            // Pedestrian Mode
+            if (roadY > -50) pedX += 3;
+        }
+
+        // Logic Check
+        if (car.y < roadY + 80 && car.y > roadY && !hasEvaluated) {
+            if (mode === "SIGNAL") {
+                if (lightStatus === "RED" && speed > 0) {
+                    mistakes++; hasEvaluated = true;
+                } else if (lightStatus === "GREEN") {
+                    score += 5; hasEvaluated = true;
+                }
+            } else {
+                if (pedX > 40 && pedX < 320 && speed > 1) {
+                    mistakes++; hasEvaluated = true;
+                } else if (pedX >= 320) {
+                    score += 5; hasEvaluated = true;
+                }
+            }
+            
+            // Check for 3rd mistake
+            if (mistakes >= 3) triggerQuiz();
+        }
+
+        // Reset and Toggle Mode
+        if (roadY > canvas.height) {
+            roadY = -500; pedX = -30; hasEvaluated = false;
+            lightStatus = "RED"; lightTimer = 150;
+            mode = (mode === "PED") ? "SIGNAL" : "PED"; // Alternates
+        }
+
         document.getElementById('score').innerText = score;
         document.getElementById('mistakes').innerText = mistakes;
     }
 
-    function update() {
-        if (isGameOver) return;
-
-        let isBraking = keys['ArrowDown'];
-        let currentSpeed = isBraking ? 0 : roadSpeed;
-
-        // Steering
-        if (keys['ArrowLeft'] && car.x > 55) car.x -= 5;
-        if (keys['ArrowRight'] && car.x < 295) car.x += 5;
-
-        // Move Environment
-        crosswalkY += currentSpeed;
-
-        // LOGIC: Detect if car is waiting at the light
-        const carFront = car.y;
-        const distToLight = carFront - crosswalkY;
-
-        // If car is close to the line (within 80px) and it's RED
-        if (distToLight < 100 && distToLight > 0 && lightStatus === "RED") {
-            if (isBraking) {
-                // User is waiting! Start the timer
-                waitTimer--;
-                if (waitTimer <= 0) {
-                    lightStatus = "GREEN";
-                }
-            } else if (carFront < crosswalkY + 20) {
-                // User crossed the line while RED
-                if (!hasEvaluated) {
-                    mistakes++;
-                    hasEvaluated = true; 
-                    if (mistakes >= 3) isGameOver = true;
-                    document.getElementById('reason').innerText = "You ran a Red Light!";
-                }
-            }
-        }
-
-        // Scoring: If you pass while Green
-        if (lightStatus === "GREEN" && carFront < crosswalkY && !hasEvaluated) {
-            score += 5;
-            hasEvaluated = true;
-        }
-
-        // Move Pedestrian only if Green
-        if (lightStatus === "GREEN") pedX += 4;
-
-        // Reset Round
-        if (crosswalkY > canvas.height) {
-            crosswalkY = -500;
-            pedX = -30;
-            hasEvaluated = false;
-            lightStatus = "RED";
-            waitTimer = 80 + Math.random() * 50; // Randomize wait time for next light
-        }
-
-        if (isGameOver) document.getElementById('msg').style.display = 'block';
-        updateUI();
-    }
-
     function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Road & Sidewalks
         ctx.fillStyle = "#333"; ctx.fillRect(0,0, 400, 600);
-        ctx.fillStyle = "#555"; ctx.fillRect(0,0, 50, 600); ctx.fillRect(350,0, 50, 600);
-
+        ctx.fillStyle = "#444"; ctx.fillRect(0,0, 50, 600); ctx.fillRect(350,0, 50, 600);
+        
         // Lines
-        ctx.strokeStyle = "white"; ctx.setLineDash([20, 20]);
+        ctx.strokeStyle = "white"; ctx.setLineDash([20,20]);
         ctx.beginPath(); ctx.moveTo(200, 0); ctx.lineTo(200, 600); ctx.stroke();
 
         // Crosswalk
         ctx.fillStyle = "white"; ctx.setLineDash([]);
-        for (let i = 0; i < 7; i++) {
-            ctx.fillRect(60 + (i * 45), crosswalkY, 30, 100);
+        for (let i = 0; i < 7; i++) ctx.fillRect(60 + (i * 45), roadY, 30, 100);
+
+        // Conditional Signal
+        if (mode === "SIGNAL") {
+            ctx.fillStyle = "#000"; ctx.fillRect(360, roadY - 80, 30, 70);
+            ctx.fillStyle = (lightStatus === "RED") ? "#f00" : "#300";
+            ctx.beginPath(); ctx.arc(375, roadY-65, 10, 0, 7); ctx.fill();
+            ctx.fillStyle = (lightStatus === "GREEN") ? "#0f0" : "#030";
+            ctx.beginPath(); ctx.arc(375, roadY-30, 10, 0, 7); ctx.fill();
         }
 
-        // Traffic Light Box
-        ctx.fillStyle = "#111";
-        ctx.fillRect(360, crosswalkY - 80, 30, 70);
-        
-        // Red Light Circle
-        ctx.fillStyle = (lightStatus === "RED") ? "#ff0000" : "#330000";
-        ctx.beginPath(); ctx.arc(375, crosswalkY-65, 10, 0, Math.PI*2); ctx.fill();
-        
-        // Green Light Circle
-        ctx.fillStyle = (lightStatus === "GREEN") ? "#00ff00" : "#003300";
-        ctx.beginPath(); ctx.arc(375, crosswalkY-30, 10, 0, Math.PI*2); ctx.fill();
-
         // Pedestrian
-        ctx.fillStyle = "#ffcc99";
-        ctx.beginPath(); ctx.arc(50 + pedX, crosswalkY + 50, 12, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = "#f1c40f"; ctx.beginPath(); 
+        ctx.arc(50 + pedX, roadY + 50, 12, 0, 7); ctx.fill();
 
         // Car
-        ctx.fillStyle = "#3498db";
-        ctx.fillRect(car.x, car.y, car.w, car.h);
-        ctx.fillStyle = "#ade1f5"; // Window
-        ctx.fillRect(car.x + 5, car.y + 10, 40, 15);
+        ctx.fillStyle = "#3498db"; ctx.fillRect(car.x, car.y, car.w, car.h);
+        ctx.fillStyle = "black"; ctx.fillRect(car.x+5, car.y+15, 40, 25); // Window
 
-        requestAnimationFrame(() => {
-            update();
-            draw();
-        });
+        requestAnimationFrame(() => { update(); draw(); });
     }
 
-    function resetGame() { init(); }
-
-    init();
     draw();
 </script>
 </body>
