@@ -2,7 +2,7 @@
   <img src="./img.png" alt="Project Banner" width="100%">
 </p>
 
-# [Project Name] 🎯
+# [Car Traffic Game ] 🎯
 
 ## Basic Details
 
@@ -418,3 +418,4 @@ This project is licensed under the [LICENSE_NAME] License - see the [LICENSE](LI
 ---
 
 Made with ❤️ at TinkerHub
+
