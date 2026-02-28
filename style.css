@@ -1,0 +1,136 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+/* GAME AREA */
+body {
+  background: #222;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+#gameArea {
+  position: relative;
+  width: 360px;
+  height: 600px;
+  background: #444;
+  overflow: hidden;
+  border: 3px solid white;
+}
+
+/* HUD */
+#hud {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: black;
+  color: white;
+  padding: 8px;
+  font-size: 14px;
+  border-radius: 6px;
+  z-index: 5;
+}
+
+/* SCHOOL ZONE */
+#school {
+  position: absolute;
+  top: 90px;
+  left: 20px;
+  right: 20px;
+  text-align: center;
+  background: yellow;
+  color: black;
+  padding: 8px;
+  font-weight: bold;
+  display: none;
+  z-index: 4;
+}
+
+/* ROAD */
+#road {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #666;
+}
+
+/* PEDESTRIAN CROSSING */
+#crossing {
+ position: absolute;
+  top: -120px;
+  width: 100%;
+  height: 50px;
+  background: repeating-linear-gradient(
+    to right,
+    white 0px,
+    white 20px,
+    transparent 20px,
+    transparent 40px
+  );
+}
+
+/* CAR */
+#car {
+  
+  position: absolute;
+  bottom: 30px;   /* fixed & realistic */
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 34px;
+  z-index: 5;
+
+}
+#pedestrian {
+  position: absolute;
+  top: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 26px;
+  display: none;
+  z-index: 6;
+}
+#messageBox {
+  position: absolute;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.8);
+  color: white;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 14px;
+  display: none;
+  z-index: 10;
+}
+
+/* CONTROLS */
+#controls {
+  position: absolute;
+  right: 10px;
+  top: 40%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 5;
+}
+
+#controls button {
+  padding: 10px;
+  font-size: 16px;
+  background: #222;
+  color: white;
+  border: 2px solid white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#controls button:hover {
+  background: white;
+  color: black;
+}
